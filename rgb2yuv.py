@@ -51,8 +51,8 @@ if __name__ == '__main__':
     # bgr2nv12("2088.jpg", "2088.yuv")
     # bgr2nv12("change_line_1.jpg", "change_line_1.yuv")
 
-    bgr_img = nv12tobgr('C:\\Users\\Administrator\\Desktop\\DriversFace\\frame42_frame.yuv', 720, 1280, 0)
-    cv2.imwrite("C:\\Users\\Administrator\\Desktop\\DriversFace\\frame42_frame.jpg", bgr_img)
+    bgr_img = nv12tobgr('frame200_frame.yuv', 720, 1280, 0)
+    cv2.imwrite("frame200_frame.jpg", bgr_img)
     # cv2.imshow("nv12tobgr", bgr_img)
     # cv2.waitKey(0)
     # cv2.destroyAllWindows()
