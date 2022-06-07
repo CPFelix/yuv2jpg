@@ -36,6 +36,36 @@ def bgr2nv12(filename, save=None):
         print("save in",  save)
     return yuv
 
+def bgr2nv21(filename, save=None):
+    bgr = cv2.imread(filename)
+    i420 = cv2.cvtColor(bgr, cv2.COLOR_BGR2YUV_I420)
+    height = bgr.shape[0]
+    width = bgr.shape[1]
+
+    u = i420[height: height + height // 4, :]
+    u = u.reshape((1, height // 4 * width))
+    v = i420[height + height // 4: height + height // 2, :]
+    v = v.reshape((1, height // 4 * width))
+    uv = np.zeros((1, height // 4 * width * 2))
+    uv[:, 0::2] = v
+    uv[:, 1::2] = u
+    uv = uv.reshape((height // 2, width))
+    nv21 = np.zeros((height + height // 2, width))
+    nv21[0:height, :] = i420[0:height, :]
+    nv21[height::, :] = uv
+    if save is not None:
+        # 写入文件
+        nv21.astype("int8").tofile(save)
+        print("save in", save)
+    return nv21
+
+def nv21tobgr(yuv_path,width,height):
+    with open(yuv_path, 'rb') as f:
+        yuvdata = np.fromfile(f, dtype=np.uint8)
+    #yuvdata = yuvdata[4 * 4 :]
+    cv_format=cv2.COLOR_YUV2BGR_NV21
+    bgr_img = cv2.cvtColor(yuvdata.reshape((height*3//2, width)), cv_format)
+    return bgr_img
 
 def demo():
     bgr_img = nv12tobgr('nv12.yuv', 720, 1280, 0)
@@ -48,11 +78,13 @@ def demo():
     cv2.destroyAllWindows()
 
 if __name__ == '__main__':
-    # bgr2nv12("2088.jpg", "2088.yuv")
+    # bgr2nv12("f2.png", "f2.yuv")
+    # bgr2nv21("f2.png", "f2_nv21.yuv")
     # bgr2nv12("change_line_1.jpg", "change_line_1.yuv")
 
-    bgr_img = nv12tobgr('frame200_frame.yuv', 720, 1280, 0)
-    cv2.imwrite("frame200_frame.jpg", bgr_img)
+    # bgr_img = nv12tobgr('-1653486357771000---w2560---h1440.yuv', 1440, 2560, 0)
+    bgr_img = nv21tobgr("frame1_frame.yuv", 1280, 720)
+    cv2.imwrite("frame1_frame.jpg", bgr_img)
     # cv2.imshow("nv12tobgr", bgr_img)
     # cv2.waitKey(0)
     # cv2.destroyAllWindows()
